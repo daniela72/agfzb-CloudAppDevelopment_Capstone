@@ -1,11 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-    <body>
-    <!--Add a registration form here -->
-    </body>
-</html>
+{% extends 'djangoapp/base.html' %}
+{% block body_block %}
+    <!-- Registration form -->
+    <div class="container mt-5 mb-5">
+    <h1>Sign Up</h1>
+    <hr>
+    <form action="{% url 'djangoapp:registration' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group w-15 p-3">
+                <label for="username"><b>User Name</b></label>
+                <input type="text" class="form-control" placeholder="Enter User Name: " name="username" required> <!--Style input with .form-control class -->
+                <label for="firstname"><b>First Name</b></label>
+                <input type="text" class="form-control" placeholder="Enter First Name: " name="firstname" required> <!--Style input with .form-control class -->
+                <label for="lastname"><b>Last Name</b></label>
+                <input type="text" class="form-control" placeholder="Enter Last Name: " name="lastname" required> <!--Style input with .form-control class -->
+                <label for="psw"><b>Password</b></label>
+                <input type="password" class="form-control" placeholder="Enter Password: " name="psw1" required>
+                <label for="psw"><b>Confirm Password</b></label>
+                <input type="password" class="form-control" placeholder="Confirm Password: " name="psw2" required> 
+                <!--Style input with .form-control class -->
+                {% if message %}
+                <div class="alert alert-warning mt-2">
+                    {{ message }}
+                </div>
+                {% endif %}
+                <button class="btn btn-primary mt-2" type="submit">Sign up</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
