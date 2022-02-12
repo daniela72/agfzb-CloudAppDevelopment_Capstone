@@ -5,27 +5,22 @@ from django.utils.timezone import now
 
 # <HINT> Car Make model `class CarMake(models.Model)`:
 class CarMake(models.Model):
-    Name = models.CharField(
-        null=False,
-        max_length=20,
-        )
-    Description = models.CharField(
-        null=False,
-        max_length=20,
-        )
-    Slogan = models.CharField(
-        null=False,
-        max_length=20,
-        )
+    Name = models.CharField(null=False, max_length=30)
+    Description = models.CharField(max_length=100)
 
     def __str__(self):
-        return "CarMake: " + self.Name  + \
-                " - Descritpion: " + self.Description + \
-                "\nSlogan: " + self.Slogan
+        # returned in the admin section when used in another field
+        return "Name: " + self.Name + " / " + \
+               "Description: " + self.Description
 
 
 # <HINT> Car Model model `class CarModel(models.Model):`:
 class CarModel(models.Model):
+
+    YEAR_CHOICES = []
+    for r in range((now().year), 1979, -1):
+        YEAR_CHOICES.append((r, r))
+
     NOT_SPEC = ' '
     SEDAN = 'Sedan'
     SUV = 'SUV'
@@ -38,29 +33,15 @@ class CarModel(models.Model):
         (WAGON,'WAGON'),
         (SPORT,'Sport')
         ]
-    CarMake = models.ForeignKey(
-        CarMake,
-        on_delete=models.CASCADE
-        )
-    DealerId = models.IntegerField(
-        default=-1
-        )
-    Name = models.CharField(
-        null=False,
-        max_length=20,
-        )
-    Type = models.CharField(
-        max_length=7,
-        choices=CAR_TYPES,
-        default=NOT_SPEC
-        )
-    Year = models.DateField(
-        null=False
-        )
+    CarMake = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    DealerId = models.IntegerField(null=False)
+    Name = models.CharField(null=False, max_length=30)
+    CarType = models.CharField(max_length=9, choices=CAR_TYPES, default=NOT_SPEC)
+    Year = models.IntegerField(choices=YEAR_CHOICES, default=now().year) 
 
     def __str__(self):
         return "Car Model: " + self.Name + \
-                ", Type: " + self.Type + \
+                ", Type: " + self.CarType + \
                 ", Year: " + str(self.Year) + \
                 ", DealerId: " + str(self.DealerId) + \
                 ", Car Make: <" + str(self.CarMake) + " >"
