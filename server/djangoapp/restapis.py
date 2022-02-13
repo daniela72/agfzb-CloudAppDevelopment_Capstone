@@ -2,24 +2,37 @@ import requests
 import json
 import urllib
 import datetime
-from . models import CarDealer, DealerReview
+from .models import CarDealer
 from requests.auth import HTTPBasicAuth
 
 
-def get_req(url, api_key=None, **kwargs):
+def get_request(url, **kwargs):
     print(kwargs)
-    print(f"GET {url}")
+    # print(f"GET {url}")
+    print("GET from {} ".format(url))
     try:
-        if api_key:
-            response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs, auth=HTTPBasicAuth('apikey', api_key))
-        else:
-            response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
-    except Exception as e:
-        print("ERROR: ", e)
-    print(f"Status Code: {response.status_code}")
+        response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
+    except:
+        print("Network exception occured")
+    print(f"Status Code is: {response.status_code}")
     json_data = json.loads(response.text)
     return json_data
 
+
+def get_dealers_from_cf(url, **kwargs):
+    results = []
+    json_result = get_request(url)
+    if json_result:
+        dealers = json_result["fields"]
+        for dealer in dealers:
+            dealer_obj = CarDealer(address=dealer["address"], city=dealer["city"], full_name=dealer["full_name"],
+                                   id=dealer["id"], lat=dealer["lat"], long=dealer["long"],
+                                   short_name=dealer["short_name"], st=dealer["st"], zip=dealer["zip"])
+            results.append(dealer_obj)
+    return results
+
+
+'''
 def post_request(url, json_payload, **kwargs):
     print("Payload: ", json_payload, ". Params: ", kwargs)
     print(f"POST {url}")
@@ -33,21 +46,6 @@ def post_request(url, json_payload, **kwargs):
     print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
     return json_data
-
-def get_dealers_from_cf(url, state=""):
-    results = []
-    if state == "":
-        json_result = get_req(url)
-    else:
-        json_result = get_req(url, state=state)
-    if json_result:
-        dealers = json_result["entries"]
-        for dealer in dealers:
-            dealer_obj = CarDealer(address=dealer["address"], city=dealer["city"], full_name=dealer["full_name"],
-                                   id=dealer["id"], lat=dealer["lat"], long=dealer["long"],
-                                   state=dealer["state"], st=dealer["st"], zip=dealer["zip"])
-            results.append(dealer_obj)
-    return results
 
 
 def get_dealer_by_id_from_cf(url, dealer_id):
@@ -94,4 +92,4 @@ def analyze_review_sentiments(text):
         result = json_result["sentiment"]["document"]["label"]
     finally:
         return result
-
+'''

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf, post_request
+from .restapis import get_dealers_from_cf
 # from .models import related models
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -88,7 +88,14 @@ def registration_request(request):
 
 
 def get_dealerships(request):
-        return render(request, 'djangoapp/index.html')
+    if request.method == "GET":
+        url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/dealership"
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(dealer_names)
 
 
 '''
