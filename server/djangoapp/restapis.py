@@ -2,7 +2,7 @@ import requests
 import json
 import urllib
 import datetime
-from .models import CarDealer
+from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
 
 
@@ -29,6 +29,22 @@ def get_dealers_from_cf(url, **kwargs):
                                    id=dealer["id"], lat=dealer["lat"], long=dealer["long"],
                                    short_name=dealer["short_name"], st=dealer["st"], zip=dealer["zip"])
             results.append(dealer_obj)
+    return results
+
+
+def get_dealer_reviews_from_cf(url, dealer_id):
+    results = []
+    json_result = get_request(url, dealerId=dealer_id)
+    if json_result:
+        reviews = json_result["reviews"]
+        for review in reviews:
+                review_obj = DealerReview(make=review["make"], model=review["model"], 
+                                    year=review["year"], dealer_id=review["dealer_id"], 
+                                    id=review["id"], name=review["name"], purchase=review["purchase"], 
+                                    purchase_date=review["purchase_date"], review=review["review"])                                   
+                # review_obj.sentiment = analyze_review_sentiments(review_obj.review)
+                results.append(review_obj)
+
     return results
 
 
@@ -61,25 +77,6 @@ def get_dealer_by_id_from_cf(url, dealer_id):
 
     return None
 
-def get_dealer_reviews_from_cf(url, dealer_id):
-    results = []
-    json_result = get_req(url, dealerId=dealer_id)
-    if json_result:
-        reviews = json_result["entries"]
-        for review in reviews:
-            if review["purchase"]:
-                review_obj = DealerReview(make=review["car_make"], model=review["car_model"], 
-                                    year=review["car_year"], dealer_id=review["dealership"], 
-                                    id=review["id"], name=review["name"], purchase=review["purchase"], 
-                                    purchase_date=review["purchase_date"], review=review["review"])
-            else:
-                review_obj = DealerReview(dealer_id=review["dealership"], 
-                                    id=review["id"], name=review["name"], purchase=review["purchase"], 
-                                   review=review["review"])                                    
-            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
-            results.append(review_obj)
-
-    return results
 
 def analyze_review_sentiments(text):
     result = "Not checked"
