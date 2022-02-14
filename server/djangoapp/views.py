@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request, get_dealer_by_id
 # from .models import related models
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+import random
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -102,38 +103,41 @@ def get_dealerships(request):
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-def get_dealer_details(request, dealer_id):
+def get_dealer_details(request, dealerId):
     context = {}
     if request.method == "GET":
-        # Get reviews from the UR
+        # Get reviews from the URL
         url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/review"        
-        reviews = get_dealer_reviews_from_cf(url, dealer_id)
+        reviews = get_dealer_reviews_from_cf(url, dealerId)
         #reviews_all = ' '.join([review.review for review in reviews_list])
         context["reviews_list"] = reviews
-        context["dealer_id"] = dealer_id
+        context["dealerId"] = dealerId
         return render(request, 'djangoapp/dealer_details.html', context)
 
 
-'''
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     context = {}
     if request.method == "GET":
         context["dealer_id"] = dealer_id
+        url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/dealership"
+        dealer_by_id = get_dealer_by_id(url, dealer_id)
+        context['dealer_name'] = dealer_by_id
         return render(request, 'djangoapp/add_review.html', context)
 
     if request.method == "POST":
         user = request.user
         if not user.is_authenticated:
-            context["error_message"] = "Please, login at first"
+            context["error_message"] = "Please, login to submit a review"
             context["dealer_id"] = dealer_id
             return render(request, 'djangoapp/add_review.html', context)
 
         review = {}
-        review["id"] = 0
+        review["id"] = random.randrange(100, 1000, 3)
+        review["time"] = datetime.utcnow().isoformat()
         review["name"] = request.POST["createreviewform_name"]
-        review["dealership"] = dealer_id
-        review["review"] = request.POST["createreviewform_review"]
+        review["dealership"] = int(dealer_id)
+        review["review"] = request.POST["review"]
         review["purchase"] = request.POST["createreviewform_purchase"]
         review["purchase_date"] = request.POST["createreviewform_purchase_date"]
         review["car_make"] = request.POST["createreviewform_car_make"]
@@ -141,7 +145,7 @@ def add_review(request, dealer_id):
         review["car_year"] = request.POST["createreviewform_car_year"]
         json_payload = {}
         json_payload["review"] = review
-        json_result = post_request("https://af176ef2.us-south.apigw.appdomain.cloud/api/review/", json_payload, dealerId=dealer_id)
+        json_result = post_request("https://2fe3d546.us-south.apigw.appdomain.cloud/api/review/", json_payload, dealer_id=dealer_id)
         print("POST request result: ", json_result)
         if json_result["status"] == 200:
             context["success_message"] = "Review submitted!"
@@ -150,4 +154,3 @@ def add_review(request, dealer_id):
         context["dealer_id"] = dealer_id
         return render(request, 'djangoapp/add_review.html', context)
 
-'''
