@@ -115,6 +115,19 @@ def get_dealer_details(request, dealerId):
         return render(request, 'djangoapp/dealer_details.html', context)
 
 
+# Create a `get_dealer_details` view to render the reviews of a dealer
+def get_dealer_details_search(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        # Get reviews from the URL
+        url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/search"        
+        dealer_by_id = get_dealer_by_id(url, dealer_id)
+        #reviews_all = ' '.join([review.review for review in reviews_list])
+        context["dealer_info"] = dealer_by_id
+        context["dealer_id"] = dealer_id
+        return render(request, 'djangoapp/dealer_details.html', context)
+
+
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     context = {}
