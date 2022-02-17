@@ -53,6 +53,7 @@
     </nav>
 
     <!--Add a dealer table here -->
+    <div class="container mt-5 mb-5 text-justify w-27 p-3">
     <table class="table" id="table" data-filter-control="true">
         <thead>
             <tr>
@@ -69,7 +70,7 @@
             {% for dealer in dealership_list %}
                 <tr>
                     <td>{{dealer.id}}</td>
-                    <td><a href="{% url 'djangoapp:dealer_details_search' dealer.id %}">{{dealer.full_name}}</a></td>
+                    <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a></td>
                     <td>{{dealer.city}}</td>
                     <td>{{dealer.address}}</td>
                     <td>{{dealer.zip}}</td>
@@ -78,6 +79,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 
     </body>
 
