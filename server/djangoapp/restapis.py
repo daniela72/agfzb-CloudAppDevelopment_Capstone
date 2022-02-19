@@ -7,7 +7,7 @@ from requests.auth import HTTPBasicAuth
 
 
 def get_request(url, **kwargs):
-    # print(kwargs)
+    print(f"get_request section {kwargs}")
     # print(f"GET {url}")
     # print("GET from {} ".format(url))
     try:
@@ -64,6 +64,7 @@ def get_dealer_by_id(url, dealer_id):
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 # get from cf. Linked to views
+#  we need to define dealer_id argument
 def get_dealer_reviews_from_cf(url, dealerId):
     # print(f"GET the {dealerId}")
     results = []
@@ -84,17 +85,19 @@ def get_dealer_reviews_from_cf(url, dealerId):
 
 # `analyze_review_sentiments` method to call Watson NLU and analyze text
 def analyze_review_sentiments(dealerreview):
-    result = "Not checked"
+    result = []
     try:
         json_result = get_request(
-                        url="https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/62586fea-a45d-420e-a129-7dcba8bdeee9", 
+                        url="https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/62586fea-a45d-420e-a129-7dcba8bdeee9/v1/analyze", 
                         api_key="9XJvPs5xSt_DDQjL7fklWit_4FN2LZ45APWMMcxWzzRy", 
                         version="2021-08-01",
                         features="sentiment",
+                        language='en',
                         return_analyzed_text=True,
-                        text=urllib.parse.quote_plus(dealerreview))
+                        text=dealerreview)
         result = json_result["sentiment"]["document"]["label"]
     finally:
+        print(f"the result is {result}")
         return result
 
 
