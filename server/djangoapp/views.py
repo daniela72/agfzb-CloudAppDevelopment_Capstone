@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request, get_dealer_by_id
+from .models import CarModel
 # from .models import related models
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -134,39 +135,35 @@ def get_dealer_details_search(request, dealerId):
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     context = {}
-    if request.method == "GET":
-        context["dealer_id"] = dealer_id
-        url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/dealership"
-        dealer_by_id = get_dealer_by_id(url, dealer_id)
-        context['dealer_name'] = dealer_by_id
-        return render(request, 'djangoapp/add_review.html', context)
-
-    if request.method == "POST":
-        user = request.user
-        if not user.is_authenticated:
-            context["error_message"] = "Please, login to submit a review"
+    user = request.user 
+    if user.is_authenticated:
+        if request.method == "GET":
+            cars = CarModel.objects.filter(DealerId=dealer_id)
+            if len(cars) == 0:
+                messages.add_message(request, messages.WARNING, \
+                        'This Dealer does not sell cars yet.')
+            context['cars'] = cars
+            context["dealer_id"] = dealer_id
+            urlSearch = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/search"        
+            dealer_by_id = get_dealer_by_id(urlSearch, dealer_id)
+            context["dealer_info"] = dealer_by_id[0]
+            return render(request, 'djangoapp/add_review.html', context)
+        elif request.method == "POST":
+            review = {}
+            review["id"] = random.randrange(100, 1000, 3)
+            review["name"] = request.user.username
+            review["dealership"] = int(dealer_id)
+            review["review"] = request.POST['review']
+            review["purchase"] = "true"
+            review["purchase_date"] = "02/16/2022"
+            review["car_make"] = "Audi"
+            review["car_model"] = "Car"
+            review["car_year"] = "2022"
+            json_payload = {}
+            json_payload["review"] = review
+            print(f"this is the payload {json_payload}")
+            json_result = post_request("https://2fe3d546.us-south.apigw.appdomain.cloud/api/review/", json_payload, dealer_id=dealer_id)
+            print("POST request result: ", json_result)
             context["dealer_id"] = dealer_id
             return render(request, 'djangoapp/add_review.html', context)
-
-        review = {}
-        review["id"] = random.randrange(100, 1000, 3)
-        review["time"] = datetime.utcnow().isoformat()
-        review["name"] = request.POST["createreviewform_name"]
-        review["dealership"] = int(dealer_id)
-        review["review"] = request.POST["review"]
-        review["purchase"] = request.POST["createreviewform_purchase"]
-        review["purchase_date"] = request.POST["createreviewform_purchase_date"]
-        review["car_make"] = request.POST["createreviewform_car_make"]
-        review["car_model"] = request.POST["createreviewform_car_model"]
-        review["car_year"] = request.POST["createreviewform_car_year"]
-        json_payload = {}
-        json_payload["review"] = review
-        json_result = post_request("https://2fe3d546.us-south.apigw.appdomain.cloud/api/review/", json_payload, dealer_id=dealer_id)
-        print("POST request result: ", json_result)
-        if json_result["status"] == 200:
-            context["success_message"] = "Review submitted!"
-        else:
-            context["error_message"] = "ERROR: Review not submitted."
-        context["dealer_id"] = dealer_id
-        return render(request, 'djangoapp/add_review.html', context)
 

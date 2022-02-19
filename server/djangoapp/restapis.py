@@ -97,7 +97,6 @@ def analyze_review_sentiments(dealerreview):
                         text=dealerreview)
         result = json_result["sentiment"]["document"]["label"]
     finally:
-        print(f"the result is {result}")
         return result
 
 
@@ -106,12 +105,16 @@ def post_request(url, json_payload, **kwargs):
     print(f"POST {url}")
     try:
         response = requests.post(url, headers={'Content-Type': 'application/json'},
-                                json=json_payload, params=kwargs)
+                                data=json_payload)
+        print(f"THE RESPONSE IS {response}")
+        return {}
     except:
         # If any error occurs
         print("Network exception occurred")
+        return {}
     status_code = response.status_code
     print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
+    print(f"With DATA {json_data}")
     return json_data
 

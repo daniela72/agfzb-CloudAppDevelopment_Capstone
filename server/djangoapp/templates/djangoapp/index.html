@@ -54,7 +54,7 @@
 
     <!--Add a dealer table here -->
     <div class="container mt-5 mb-5 text-justify w-27 p-3">
-    <table class="table" id="table" data-filter-control="true">
+    <table class="table table-striped" id="table" data-filter-control="true" data-show-search-clear-button="false">
         <thead>
             <tr>
                 <th data-field="id">ID</th>
@@ -82,5 +82,9 @@
     </div>
 
     </body>
-
+    <script>
+        $(function() {
+            $('#table').bootstrapTable()
+        })
+    </script>
 </html>
