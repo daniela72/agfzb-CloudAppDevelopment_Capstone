@@ -174,6 +174,7 @@ def add_review(request, dealer_id):
                     return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
             except:
                 print("post failed")
-                messages.add_message(request, messages.WARNING, json_payload, json_result)
+                messages.add_message(request, messages.WARNING, json_payload)
+                messages.add_message(request, messages.SUCCESS, json_result)
             return render(request, 'djangoapp/add_review.html', context)
 
