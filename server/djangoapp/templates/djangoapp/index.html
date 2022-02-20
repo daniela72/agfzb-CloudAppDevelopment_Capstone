@@ -80,11 +80,21 @@
         </tbody>
     </table>
     </div>
-
+    <footer>
+        <hr />
+        <div class="container mt-5">
+        <p>
+          <a href="{% url 'djangoapp:about' %}">About Us</a>
+        </p>
+        <p>
+          <a href="{% url 'djangoapp:contact' %}">Contact Us</a>
+        </p>
+        </div>
+    </footer>
     </body>
-    <script>
-        $(function() {
-            $('#table').bootstrapTable()
-        })
-    </script>
+<script>
+    $(function() {
+        $('#table').bootstrapTable()
+    })
+</script>
 </html>
