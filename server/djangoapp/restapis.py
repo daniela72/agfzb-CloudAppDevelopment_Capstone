@@ -106,7 +106,7 @@ def post_request(url, json_payload, **kwargs):
     print(f"POST {url}")
     try:
         # response = requests.post(url, headers={'Content-type': 'application/json'}, json=json_payload, params=kwargs)
-        response = requests.post(url, params=kwargs, json=json_payload)
+        response = requests.post(url, json=json_payload, verify = False)
         print(f"THE RESPONSE IS {response}")
     except:
         # If any error occurs
