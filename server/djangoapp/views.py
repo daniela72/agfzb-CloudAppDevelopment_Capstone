@@ -168,5 +168,6 @@ def add_review(request, dealer_id):
             print("POST request result: ", json_result)
             messages.add_message(request, messages.WARNING, json_payload)
             messages.add_message(request, messages.SUCCESS, json_result)
+            messages.add_message(request, messages.INFO, response)
             return render(request, 'djangoapp/add_review.html', context)
 
