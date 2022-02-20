@@ -163,7 +163,7 @@ def add_review(request, dealer_id):
             json_payload = {}
             json_payload["review"] = review
             print(f"this is the payload {json_payload}")
-            url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/review/"
+            url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/review"
             json_result = post_request(url, json_payload, dealer_id=dealer_id)
             print("POST request result: ", json_result)
             messages.add_message(request, messages.WARNING, json_payload)
