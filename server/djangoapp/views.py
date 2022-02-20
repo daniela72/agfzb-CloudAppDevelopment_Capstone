@@ -137,13 +137,13 @@ def add_review(request, dealer_id):
     context = {}
     user = request.user 
     if user.is_authenticated:
+        cars = CarModel.objects.filter(DealerId=dealer_id)
+        context['cars'] = cars
+        context["dealer_id"] = dealer_id
         if request.method == "GET":
-            cars = CarModel.objects.filter(DealerId=dealer_id)
             if len(cars) == 0:
                 messages.add_message(request, messages.WARNING, \
                         'This Dealer does not sell cars yet.')
-            context['cars'] = cars
-            context["dealer_id"] = dealer_id
             urlSearch = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/search"        
             dealer_by_id = get_dealer_by_id(urlSearch, dealer_id)
             context["dealer_info"] = dealer_by_id[0]
@@ -155,15 +155,24 @@ def add_review(request, dealer_id):
             review["dealership"] = int(dealer_id)
             review["review"] = request.POST['review']
             review["purchase"] = "true"
-            review["purchase_date"] = "02/16/2022"
-            review["car_make"] = "Audi"
-            review["car_model"] = "Car"
-            review["car_year"] = "2022"
+            review["purchase_date"] = request.POST["purchasedate"]
+            car_model = CarModel.objects.get(DealerId=request.POST['car'])
+            review['car_make'] = car_model.CarMake.Name
+            review['car_model'] = car_model.Name
+            review['car_year'] = car_model.Year
             json_payload = {}
             json_payload["review"] = review
             print(f"this is the payload {json_payload}")
-            json_result = post_request("https://2fe3d546.us-south.apigw.appdomain.cloud/api/review/", json_payload, dealer_id=dealer_id)
+            json_result = post_request("https://2fe3d546.us-south.apigw.appdomain.cloud/api/review/", json_payload=json_payload, dealer_id=dealer_id)
             print("POST request result: ", json_result)
-            context["dealer_id"] = dealer_id
+            try:
+                if json_result['ok']:
+                    # if post submission succesfull
+                    messages.add_message(request, messages.SUCCESS, \
+                            'Review has been posted succesully')
+                    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+            except:
+                print("post failed")
+                messages.add_message(request, messages.WARNING, json_payload)
             return render(request, 'djangoapp/add_review.html', context)
 
