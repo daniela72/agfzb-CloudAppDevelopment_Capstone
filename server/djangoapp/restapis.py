@@ -106,13 +106,12 @@ def post_request(url, json_payload, **kwargs):
     print("Payload: ", json_payload, ". Params: ", kwargs)
     print(f"POST {url}")
     try:
-        response = requests.post(url, headers=headers, data=json_payload)
+        response = requests.post(url, headers={'Content-type': 'application/json'}, 
+            json=json_payload)
         print(f"THE RESPONSE IS {response}")
-        return {}
     except:
         # If any error occurs
         print("Network exception occurred")
-        return {}
     status_code = response.status_code
     print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
