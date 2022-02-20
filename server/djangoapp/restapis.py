@@ -102,12 +102,11 @@ def analyze_review_sentiments(dealerreview):
 
 def post_request(url, json_payload, **kwargs):
     url = url + "/post"
-    headers = {'Content-Type': 'application/json'}
     print("Payload: ", json_payload, ". Params: ", kwargs)
     print(f"POST {url}")
     try:
-        response = requests.post(url, headers={'Content-type': 'application/json'}, 
-            json=json_payload)
+        # response = requests.post(url, headers={'Content-type': 'application/json'}, json=json_payload, params=kwargs)
+        response = requests.post(url, params=kwargs, json=json_payload)
         print(f"THE RESPONSE IS {response}")
     except:
         # If any error occurs
