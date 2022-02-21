@@ -154,10 +154,7 @@ def add_review(request, dealer_id):
             review["name"] = request.user.username
             review["dealership"] = int(dealer_id)
             review["review"] = request.POST['review']
-            if 'purchasecheck' in request.POST['purchasecheck']:
-                review['purchase'] = 'True'
-            else:
-                review['purchase'] = 'False'
+            review['purchase'] = request.POST.get('purchasecheck', False)
             review["purchase_date"] = request.POST["purchasedate"]
             # get objects from selected car model
             car_model = CarModel.objects.get(id=request.POST['car'])
