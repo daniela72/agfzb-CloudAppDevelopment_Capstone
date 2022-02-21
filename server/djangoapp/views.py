@@ -177,5 +177,5 @@ def add_review(request, dealer_id):
                 messages.add_message(request, messages.WARNING, json_result)
                 return render(request, 'djangoapp/add_review.html', context)
             else:
-                return render(request, 'djangoapp:dealer_details', context)
+                return render(request, 'djangoapp/dealer_details.html', context)
 
