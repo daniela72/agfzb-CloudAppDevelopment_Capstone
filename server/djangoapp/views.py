@@ -176,5 +176,5 @@ def add_review(request, dealer_id):
                 print("post failed")
                 messages.add_message(request, messages.WARNING, json_payload)
                 messages.add_message(request, messages.SUCCESS, json_result)
-            return render(request, 'djangoapp/add_review.html', context)
+                return render(request, 'djangoapp/add_review.html', context)
 
