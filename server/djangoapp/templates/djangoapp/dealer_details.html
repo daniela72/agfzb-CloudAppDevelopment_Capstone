@@ -1,6 +1,13 @@
 {% extends 'djangoapp/base.html' %}
 {% block body_block %}
 <div class="container mt-5 mb-5 text-justify w-27 p-3">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" role="alert">
+        <p>{{ message }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}    
     <h1>Reviews for {{dealer_info}}</h1>
     <!-- Add reviews as cards -->
     {% if reviews_list %}
