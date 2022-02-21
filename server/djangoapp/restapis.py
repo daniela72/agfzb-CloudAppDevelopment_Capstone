@@ -101,19 +101,19 @@ def analyze_review_sentiments(dealerreview):
 
 
 def post_request(url, json_payload, **kwargs):
-    url = url + "/post"
-    print("Payload: ", json_payload, ". Params: ", kwargs)
-    print(f"POST {url}")
+    url = url + '/post'
+    print('Payload: ', json_payload, '. Params: ', kwargs)
+    print(f'POST {url}')
     try:
         # response = requests.post(url, headers={'Content-type': 'application/json'}, json=json_payload, params=kwargs)
-        response = requests.post(url, json=json_payload, verify = False)
-        print(f"THE RESPONSE IS {response}")
+        response = requests.post(url, json=json_payload)
+        print(f'THE RESPONSE IS {response}')
     except:
         # If any error occurs
-        print("Network exception occurred")
+        print('Network exception occurred')
     status_code = response.status_code
-    print("With status {} ".format(status_code))
+    print('With status {} '.format(status_code))
     json_data = json.loads(response.text)
-    print(f"With DATA {json_data}")
+    print(f'With DATA {json_data}')
     return json_data
 
