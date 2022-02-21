@@ -42,8 +42,10 @@
 <script>
     $('#purchasedate').datepicker({
         format: 'mm/dd/yyyy',
-        todayHighlight: 'true',
-        todayBtn: 'linked'
+        todayBtn: 'linked',
+        autoclose: true,
+        todayHighlight: true,
+        endDate: '0'
         });
 </script>
 {% endblock %}
