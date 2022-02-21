@@ -161,11 +161,11 @@ def add_review(request, dealer_id):
             review['car_model'] = car_model.Name
             review['car_year'] = car_model.Year
             json_payload = {}
-            json_payload["review"] = review
-            print(f"this is the payload {json_payload}")
-            url = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/review"
+            json_payload['review'] = review
+            print(f'this is the payload {json_payload}')
+            url = 'https://2fe3d546.us-south.apigw.appdomain.cloud/api/review'
             json_result = post_request(url, json_payload, dealer_id=dealer_id)
-            print("POST request result: ", json_result)
+            print('POST request result: ', json_result)
             messages.add_message(request, messages.WARNING, json_payload)
             messages.add_message(request, messages.SUCCESS, json_result)
             return render(request, 'djangoapp/add_review.html', context)
