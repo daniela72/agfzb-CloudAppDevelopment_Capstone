@@ -154,8 +154,9 @@ def add_review(request, dealer_id):
             review["name"] = request.user.username
             review["dealership"] = int(dealer_id)
             review["review"] = request.POST['review']
-            review["purchase"] = "true"
+            review['purchase'] = True if request.POST['purchasecheck'] == 'on' else False
             review["purchase_date"] = request.POST["purchasedate"]
+            # get objects from selected car model
             car_model = CarModel.objects.get(id=request.POST['car'])
             review['car_make'] = car_model.CarMake.Name
             review['car_model'] = car_model.Name
@@ -171,10 +172,10 @@ def add_review(request, dealer_id):
                     # if post submission succesfull
                     messages.add_message(request, messages.SUCCESS, \
                             'Review successfully submitted')
-                    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
             except:
-                print("post failed")
                 messages.add_message(request, messages.WARNING, json_payload)
-                messages.add_message(request, messages.SUCCESS, json_result)
+                messages.add_message(request, messages.WARNING, json_result)
                 return render(request, 'djangoapp/add_review.html', context)
+            else:
+                return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
 
