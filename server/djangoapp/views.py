@@ -166,7 +166,15 @@ def add_review(request, dealer_id):
             url = 'https://2fe3d546.us-south.apigw.appdomain.cloud/api/review'
             json_result = post_request(url, json_payload, dealer_id=dealer_id)
             print('POST request result: ', json_result)
-            messages.add_message(request, messages.WARNING, json_payload)
-            messages.add_message(request, messages.SUCCESS, json_result)
-            return render(request, 'djangoapp/add_review.html', context)
+            try:
+                if json_result['ok']:
+                    # if post submission succesfull
+                    messages.add_message(request, messages.SUCCESS, \
+                            'Review successfully submitted')
+                    return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+            except:
+                print("post failed")
+                messages.add_message(request, messages.WARNING, json_payload)
+                messages.add_message(request, messages.SUCCESS, json_result)
+            return render(request, 'djangoapp/addreview.html', context)
 
