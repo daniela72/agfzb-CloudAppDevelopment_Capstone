@@ -140,13 +140,13 @@ def add_review(request, dealer_id):
     user = request.user
     if user.is_authenticated:
         context["dealer_id"] = dealer_id
+        urlSearch = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/search"        
+        dealer_by_id = get_dealer_by_id(urlSearch, dealer_id)
+        context["dealer_info"] = dealer_by_id[0]
         if request.method == "GET":
             if len(cars) == 0:
                 messages.add_message(request, messages.WARNING, \
                         'This Dealer does not sell cars yet.')
-            urlSearch = "https://2fe3d546.us-south.apigw.appdomain.cloud/api/search"        
-            dealer_by_id = get_dealer_by_id(urlSearch, dealer_id)
-            context["dealer_info"] = dealer_by_id[0]
             return render(request, 'djangoapp/add_review.html', context)
         elif request.method == "POST":
             review = {}
@@ -167,12 +167,12 @@ def add_review(request, dealer_id):
             url = 'https://2fe3d546.us-south.apigw.appdomain.cloud/api/review'
             json_result = post_request(url, json_payload, dealer_id=dealer_id)
             try:
+                # if response is 200
                 if json_result['ok']:
-                    # if post submission succesfull
-                    messages.add_message(request, messages.SUCCESS, \
+                     messages.add_message(request, messages.SUCCESS, \
                             'Review successfully submitted')
+                return redirect("djangoapp:dealer_details", dealerId=dealer_id)
             except:
                 messages.add_message(request, messages.WARNING, json_result)
-            context["dealerId"] = dealer_id
-            return render(request, 'djangoapp/dealer_details.html', context)
+            return redirect("djangoapp:dealer_details", dealerId=dealer_id)
 
