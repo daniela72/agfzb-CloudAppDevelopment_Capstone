@@ -1,10 +1,56 @@
-{% extends 'djangoapp/base.html' %}
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
-{% block body_block %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Dealership Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+</head>
+    <body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars</a>
+
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'djangoapp:index' %}">Dealership Reviews</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+            <li>
+                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li>
+                <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Username" name="username" >
+                        <input type="password" class="form-control" placeholder="Username" name="psw" >
+                        <button class="btn btn-primary" type="submit">Login</button>
+                        <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                    </div>
+                </form>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
 <!--Add review form here -->
 <div class="container mt-5 mb-5 p-3">
     {% if messages %}
@@ -23,7 +69,7 @@
         </div>
         <div class="form-check mt-3 mb-3">
             <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+            <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck" value="true">
             Did you purchase the car from {{dealer_info}}?
             </label>
         </div>
@@ -39,18 +85,30 @@
         </div>
         <div class="form-group">
             <label for="purchasedate">Date of purchase</label>
-            <input class="date-own" type="text" name="purchasedate" id="purchasedate"/>
+            <input class="date-own" type="text" name="purchasedate" id="purchasedate" required/>
         </div>
         <button class="btn-primary mt-3 mb-3 p-1" type="submit">Submit</button>
     </form>
 </div>
+<footer>
+    <hr />
+    <div class="container mt-5">
+    <p>
+      <a href="{% url 'djangoapp:about' %}">About Us</a>
+    </p>
+    <p>
+      <a href="{% url 'djangoapp:contact' %}">Contact Us</a>
+    </p>
+    </div>
+</footer>
+</body>
 <script>
     $('#purchasedate').datepicker({
         format: 'mm/dd/yyyy',
         autoclose: true,
         todayHighlight: true,
         endDate: '0',
-        orientation: "left top"
+        orientation: "top"
         });
 </script>
-{% endblock %}
+</html>

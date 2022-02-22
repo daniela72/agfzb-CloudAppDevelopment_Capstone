@@ -7,8 +7,7 @@ from requests.auth import HTTPBasicAuth
 
 
 def get_request(url, **kwargs):
-    print(f"get_request section {kwargs}")
-    # print(f"GET {url}")
+    # print(f"get_request section {kwargs}")
     # print("GET from {} ".format(url))
     try:
         # Call get method of requests library with URL and parameters
@@ -24,7 +23,7 @@ def get_request(url, **kwargs):
             response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
     except:
         print("Network exception occured")
-    print(f"Status Code is: {response.status_code}")
+    # print(f"Status Code is: {response.status_code}")
     json_data = json.loads(response.text)
     return json_data
 
@@ -48,10 +47,8 @@ def get_dealers_from_cf(url, **kwargs):
 
 # def get_dealer_by_id(url, **kwargs):
 def get_dealer_by_id(url, dealer_id):
-    print(f"kwargs are {dealer_id}")
     results = []
     json_result = get_request(url, id=dealer_id)
-    print(f"json are {json_result}")
     if json_result:
         dealers = json_result["body"]
         for dealer in dealers:
@@ -107,13 +104,11 @@ def post_request(url, json_payload, **kwargs):
     try:
         # response = requests.post(url, headers={'Content-type': 'application/json'}, json=json_payload, params=kwargs)
         response = requests.post(url, json=json_payload)
-        print(f'THE RESPONSE IS {response}')
     except:
         # If any error occurs
         print('Network exception occurred')
     status_code = response.status_code
     print('With status {} '.format(status_code))
     json_data = json.loads(response.text)
-    print(f'With DATA {json_data}')
     return json_data
 

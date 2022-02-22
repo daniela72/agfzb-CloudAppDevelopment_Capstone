@@ -135,10 +135,10 @@ def get_dealer_details_search(request, dealerId):
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     context = {}
-    user = request.user 
+    cars = CarModel.objects.filter(DealerId=dealer_id)
+    context['cars'] = cars
+    user = request.user
     if user.is_authenticated:
-        cars = CarModel.objects.filter(DealerId=dealer_id)
-        context['cars'] = cars
         context["dealer_id"] = dealer_id
         if request.method == "GET":
             if len(cars) == 0:
@@ -154,8 +154,9 @@ def add_review(request, dealer_id):
             review["name"] = request.user.username
             review["dealership"] = int(dealer_id)
             review["review"] = request.POST['review']
+            # if not selected returns False
             review['purchase'] = request.POST.get('purchasecheck', False)
-            review['purchase_date'] = request.POST.get('purchasedate', 'N/A')
+            review['purchase_date'] = request.POST['purchasedate']
             # get objects from selected car model
             car_model = CarModel.objects.get(id=request.POST['car'])
             review['car_make'] = car_model.CarMake.Name
@@ -163,20 +164,15 @@ def add_review(request, dealer_id):
             review['car_year'] = car_model.Year
             json_payload = {}
             json_payload['review'] = review
-            print(f'this is the payload {json_payload}')
             url = 'https://2fe3d546.us-south.apigw.appdomain.cloud/api/review'
             json_result = post_request(url, json_payload, dealer_id=dealer_id)
-            print('POST request result: ', json_result)
             try:
                 if json_result['ok']:
                     # if post submission succesfull
                     messages.add_message(request, messages.SUCCESS, \
                             'Review successfully submitted')
             except:
-                messages.add_message(request, messages.WARNING, json_payload)
                 messages.add_message(request, messages.WARNING, json_result)
-                return render(request, 'djangoapp/add_review.html', context)
-            else:
-                context["dealerId"] = dealer_id
-                return render(request, 'djangoapp/dealer_details.html', context)
+            context["dealerId"] = dealer_id
+            return render(request, 'djangoapp/dealer_details.html', context)
 
