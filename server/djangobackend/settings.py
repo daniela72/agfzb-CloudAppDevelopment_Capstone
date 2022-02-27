@@ -39,6 +39,7 @@ APPEND_SLASH = True
 
 ALLOWED_HOSTS = [
     "localhost",
+    "169.51.206.89",
     "daniprev.mybluemix.net"
 ]
 
